@@ -1,3 +1,8 @@
 package com.ecommerce.payments.domain
 
-class PaymentResult(val reference: Reference, val result: String, val fraudScore: Int)
+import java.util.*
+
+class PaymentResult(val reference: Optional<Reference>, val result: String, val fraudScore: Int){
+    constructor(result: String, fraudScore: Int): this(Optional.empty(), result, fraudScore)
+}
+class Reference(val value: String)

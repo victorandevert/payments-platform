@@ -2,6 +2,7 @@ package com.ecommerce.payments.feature
 
 import com.ecommerce.module
 import com.ecommerce.payments.api.PaymentResponseDTO
+import com.ecommerce.payments.domain.PspResponse
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -21,9 +22,11 @@ class PaymentFeature {
         application {
             module()
             routing {
+                post("http://localhost:3000/fraud/evaluation"){
+                    call.respond(status = HttpStatusCode.Created, 5)
+                }
                 post("http://localhost:4000/psp/payment"){
-                    val response = PaymentResponseDTO("12222-2222-222", "ACCEPTED", 5)
-                    call.respond(status = HttpStatusCode.Created, response)
+                    call.respond(status = HttpStatusCode.Created, PspResponse("12222-2222-222", "ACCEPTED"))
                 }
             }
         }
