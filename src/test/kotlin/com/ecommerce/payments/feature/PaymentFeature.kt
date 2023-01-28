@@ -3,6 +3,7 @@ package com.ecommerce.payments.feature
 import com.ecommerce.module
 import com.ecommerce.payments.api.PaymentResponseDTO
 import com.ecommerce.payments.domain.PspResponse
+import com.ecommerce.payments.domain.Reference
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -26,7 +27,7 @@ class PaymentFeature {
                     call.respond(status = HttpStatusCode.Created, 5)
                 }
                 post("http://localhost:4000/psp/payment"){
-                    call.respond(status = HttpStatusCode.Created, PspResponse("12222-2222-222", "ACCEPTED"))
+                    call.respond(status = HttpStatusCode.Created, PspResponse(Reference("12222-2222-222"), "ACCEPTED"))
                 }
             }
         }
