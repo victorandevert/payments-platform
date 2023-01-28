@@ -1,5 +1,6 @@
 package com.ecommerce.payments.feature.domain
 
+import arrow.core.Either
 import com.ecommerce.payments.domain.*
 import io.mockk.Called
 import io.mockk.every
@@ -17,7 +18,7 @@ class PaymentServiceShould {
             every { payWith(payment) } returns PspResponse("12222-2222-222", "ACCEPTED")
         }
         val fraudClient = mockk<FraudClient> {
-            every { evaluate(payment) } returns FraudResponse(5)
+            every { evaluate(payment) } returns Either.right(FraudResponse(5))
         }
 
         val paymentService = PaymentService(pspClient, fraudClient)
@@ -35,7 +36,7 @@ class PaymentServiceShould {
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
         val pspClient = mockk<PspClient>(relaxed = true)
         val fraudClient = mockk<FraudClient> {
-            every { evaluate(payment) } returns FraudResponse(8)
+            every { evaluate(payment) } returns Either.right(FraudResponse(8))
         }
 
         val paymentService = PaymentService(pspClient, fraudClient)

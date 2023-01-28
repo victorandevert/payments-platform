@@ -50,6 +50,11 @@
             <version>${logback_version}</version>
         </dependency>
         <dependency>
+            <groupId>io.arrow-kt</groupId>
+            <artifactId>arrow-core</artifactId>
+            <version>0.10.4</version>
+        </dependency>
+        <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-tests-jvm</artifactId>
             <version>${ktor_version}</version>
