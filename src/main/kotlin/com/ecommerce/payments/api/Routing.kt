@@ -4,12 +4,12 @@ import com.ecommerce.payments.domain.Amount
 import com.ecommerce.payments.domain.Payment
 import com.ecommerce.payments.domain.PaymentService
 import com.ecommerce.payments.domain.SaleId
+import com.fasterxml.jackson.annotation.JsonInclude
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
 
 fun Application.configureRouting(paymentService: PaymentService) {
     routing {
@@ -26,7 +26,6 @@ fun Application.configureRouting(paymentService: PaymentService) {
     }
 }
 
-@Serializable
 data class PaymentRequestDTO(val saleId: String, val amount: String, val currency: String)
-@Serializable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class PaymentResponseDTO(val reference: String?, val result: String, val fraudScore: Int)

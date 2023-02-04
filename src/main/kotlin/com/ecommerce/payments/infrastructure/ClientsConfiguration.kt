@@ -4,14 +4,14 @@ import com.ecommerce.payments.domain.PaymentService
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.jackson.*
 
 const val pspURL = "http://localhost:4000"
 const val fraudURL = "http://localhost:3000"
 
 fun createHttpClient() = HttpClient(Apache) {
     install(ContentNegotiation) {
-        json()
+        jackson()
     }
 }
 

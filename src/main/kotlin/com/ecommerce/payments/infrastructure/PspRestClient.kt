@@ -6,6 +6,7 @@ import arrow.core.Either.Right
 import arrow.core.None
 import arrow.core.Some
 import com.ecommerce.payments.domain.*
+import com.fasterxml.jackson.annotation.JsonInclude
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -14,7 +15,6 @@ import io.ktor.http.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.Serializable
 
 class PspRestClient(private val client: HttpClient, private val url: String) : PspClient {
     override fun payWith(payment: Payment): Either<PspError, PspResponse> {
@@ -56,5 +56,6 @@ private fun createRequestFrom(payment: Payment): PaymentDTO {
     )
 }
 
-@Serializable
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class PspResponseDTO(val reference: String?, val result: String)

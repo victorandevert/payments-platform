@@ -8,7 +8,7 @@ import com.ecommerce.payments.infrastructure.paymentService
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -24,12 +24,12 @@ class PaymentFeature {
     fun `should return an accepted payment`() = testApplication {
         val httpClient = createClient {
             install(ClientContentNegotiation){
-                json()
+                jackson()
             }
         }
         application {
             install(ServerContentNegotiation){
-                json()
+                jackson()
             }
             configureRouting(paymentService(
                 httpClient,
@@ -61,12 +61,12 @@ class PaymentFeature {
     fun `should return an denied payment`() = testApplication {
         val httpClient = createClient {
             install(ClientContentNegotiation){
-                json()
+                jackson()
             }
         }
         application {
             install(ServerContentNegotiation){
-                json()
+                jackson()
             }
             configureRouting(paymentService(
                 httpClient,

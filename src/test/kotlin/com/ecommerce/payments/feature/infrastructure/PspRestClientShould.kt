@@ -8,7 +8,7 @@ import com.ecommerce.payments.domain.SaleId
 import com.ecommerce.payments.infrastructure.PspResponseDTO
 import com.ecommerce.payments.infrastructure.PspRestClient
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -25,7 +25,7 @@ class PspRestClientShould {
     fun `return an cccepted with reference`() = testApplication {
         application {
             install(ServerContentNegotiation) {
-                json()
+                jackson()
             }
             routing {
                 post("/psp/payment") {
@@ -35,7 +35,7 @@ class PspRestClientShould {
         }
         val httpClient = createClient {
             install(ClientContentNegotiation) {
-                json()
+                jackson()
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
@@ -53,7 +53,7 @@ class PspRestClientShould {
     fun `return an denied status with no reference`() = testApplication {
         application {
             install(ServerContentNegotiation) {
-                json()
+                jackson()
             }
             routing {
                 post("/psp/payment") {
@@ -63,7 +63,7 @@ class PspRestClientShould {
         }
         val httpClient = createClient {
             install(ClientContentNegotiation) {
-                json()
+                jackson()
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
@@ -81,7 +81,7 @@ class PspRestClientShould {
     fun `return an error when call to psp service fails`() = testApplication {
         application {
             install(ServerContentNegotiation) {
-                json()
+                jackson()
             }
             routing {
                 post("/psp/payment") {
@@ -91,7 +91,7 @@ class PspRestClientShould {
         }
         val httpClient = createClient {
             install(ClientContentNegotiation) {
-                json()
+                jackson()
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))

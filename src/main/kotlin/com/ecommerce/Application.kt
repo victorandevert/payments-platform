@@ -5,7 +5,7 @@ import com.ecommerce.payments.infrastructure.createHttpClient
 import com.ecommerce.payments.infrastructure.fraudURL
 import com.ecommerce.payments.infrastructure.paymentService
 import com.ecommerce.payments.infrastructure.pspURL
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -20,7 +20,7 @@ fun main() {
 
 fun Application.module() {
     install(ContentNegotiation){
-        json()
+        jackson()
     }
     configureRouting(paymentService(createHttpClient(), pspURL, fraudURL))
 }

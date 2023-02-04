@@ -11,11 +11,11 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-
 import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.OK
-import kotlinx.coroutines.*
-import kotlinx.serialization.Serializable
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
 class FraudRestClient(private val client: HttpClient, private val url: String) : FraudClient {
     override fun evaluate(payment: Payment): Either<FraudError, FraudResponse> {
@@ -45,5 +45,4 @@ class FraudRestClient(private val client: HttpClient, private val url: String) :
         )
     }
 }
-@Serializable
 data class FraudResponseDTO(val fraudScore: Int)

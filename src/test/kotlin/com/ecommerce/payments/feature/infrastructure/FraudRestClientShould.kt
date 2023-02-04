@@ -6,12 +6,8 @@ import com.ecommerce.payments.domain.Payment
 import com.ecommerce.payments.domain.SaleId
 import com.ecommerce.payments.infrastructure.FraudResponseDTO
 import com.ecommerce.payments.infrastructure.FraudRestClient
-import com.ecommerce.payments.infrastructure.createHttpClient
-import io.ktor.client.*
-import io.ktor.client.engine.jetty.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -28,7 +24,7 @@ class FraudRestClientShould {
     fun `return a fraud score`() = testApplication {
         application {
             install(ServerContentNegotiation1) {
-                json()
+                jackson()
             }
             routing {
                 post("/fraud/evaluation") {
@@ -38,7 +34,7 @@ class FraudRestClientShould {
         }
         val httpClient = createClient {
             install(ClientContentNegotiation) {
-                json()
+                jackson()
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
@@ -55,7 +51,7 @@ class FraudRestClientShould {
     fun `return an error when call to fraud service fails`() = testApplication {
         application {
             install(ServerContentNegotiation1) {
-                json()
+                jackson()
             }
             routing {
                 post("/fraud/evaluation") {
@@ -65,7 +61,7 @@ class FraudRestClientShould {
         }
         val httpClient = createClient {
             install(ClientContentNegotiation) {
-                json()
+                jackson()
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("1", "EUR"))
