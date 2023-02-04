@@ -12,12 +12,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 
-class PspRestClient(private val client: HttpClient) : PspClient {
+class PspRestClient(private val client: HttpClient, private val url: String) : PspClient {
     override fun payWith(payment: Payment): Either<PspError, PspResponse> {
         var response : Either<PspError, PspResponse>
         runBlocking {
             val pspCall: Deferred<HttpResponse> = async {
-                client.post("http://localhost:80/psp/payment"){
+                client.post("$url/psp/payment"){
                     contentType(ContentType.Application.Json)
                     setBody(createRequestFrom(payment))
                 }
@@ -25,12 +25,26 @@ class PspRestClient(private val client: HttpClient) : PspClient {
             val httpResponse = pspCall.await()
             response = when (HttpStatusCode.OK) {
                 httpResponse.status -> Either.right(
-                    PspResponse(Reference(httpResponse.body<PspResponseDTO>().reference),
-                        httpResponse.body<PspResponseDTO>().result))
+                    getResult(httpResponse)
+                )
                 else -> Either.left(PspError())
             }
         }
         return response
+    }
+
+    private suspend fun getResult(httpResponse: HttpResponse): PspResponse {
+        return if (httpResponse.body<PspResponseDTO>().result == "DENIED") {
+            PspResponse(
+                Reference("N/A"),
+                httpResponse.body<PspResponseDTO>().result
+            )
+        } else {
+            PspResponse(
+                Reference(httpResponse.body<PspResponseDTO>().reference),
+                httpResponse.body<PspResponseDTO>().result
+            )
+        }
     }
 }
 private fun createRequestFrom(payment: Payment): PaymentDTO {
@@ -42,4 +56,4 @@ private fun createRequestFrom(payment: Payment): PaymentDTO {
 }
 
 @Serializable
-data class PspResponseDTO(val reference: String, val result: String)
+data class PspResponseDTO(val reference: String?, val result: String)

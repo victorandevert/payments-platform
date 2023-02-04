@@ -1,6 +1,10 @@
 package com.ecommerce
 
 import com.ecommerce.payments.api.configureRouting
+import com.ecommerce.payments.infrastructure.createHttpClient
+import com.ecommerce.payments.infrastructure.fraudURL
+import com.ecommerce.payments.infrastructure.paymentService
+import com.ecommerce.payments.infrastructure.pspURL
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -16,5 +20,6 @@ fun Application.module() {
     install(ContentNegotiation){
         json()
     }
-    configureRouting()
+    configureRouting(paymentService(createHttpClient(), pspURL, fraudURL))
 }
+

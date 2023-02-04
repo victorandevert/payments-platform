@@ -6,6 +6,10 @@ import com.ecommerce.payments.domain.Payment
 import com.ecommerce.payments.domain.SaleId
 import com.ecommerce.payments.infrastructure.FraudResponseDTO
 import com.ecommerce.payments.infrastructure.FraudRestClient
+import com.ecommerce.payments.infrastructure.createHttpClient
+import io.ktor.client.*
+import io.ktor.client.engine.jetty.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -38,7 +42,7 @@ class FraudRestClientShould {
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
-        val fraudRestClient = FraudRestClient(httpClient)
+        val fraudRestClient = FraudRestClient(httpClient, url = "http://localhost:80")
 
         fraudRestClient.evaluate(payment).fold(
             { fail("Should not happen") },
@@ -65,7 +69,7 @@ class FraudRestClientShould {
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("1", "EUR"))
-        val fraudRestClient = FraudRestClient(httpClient)
+        val fraudRestClient = FraudRestClient(httpClient, url = "http://localhost:80")
 
         val response = fraudRestClient.evaluate(payment)
 

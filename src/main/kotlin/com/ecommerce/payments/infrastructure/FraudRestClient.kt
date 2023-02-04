@@ -17,12 +17,12 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 
-class FraudRestClient(private val client: HttpClient) : FraudClient {
+class FraudRestClient(private val client: HttpClient, private val url: String) : FraudClient {
     override fun evaluate(payment: Payment): Either<FraudError, FraudResponse> {
         var response: Either<FraudError, FraudResponse>
         runBlocking {
             val fraudScoreCall: Deferred<HttpResponse> = async {
-                client.post("http://localhost:80/fraud/evaluation"){
+                client.post("$url/fraud/evaluation"){
                     contentType(ContentType.Application.Json)
                     setBody(createRequestFrom(payment))
                 }

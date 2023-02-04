@@ -16,14 +16,14 @@ import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.fail
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation.Plugin as ClientContentNegotiation
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation1
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
 class PspRestClientShould {
 
     @Test
     fun `return an Accepted with reference`() = testApplication {
         application {
-            install(ServerContentNegotiation1) {
+            install(ServerContentNegotiation) {
                 json()
             }
             routing {
@@ -38,7 +38,7 @@ class PspRestClientShould {
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
-        val pspRestClient = PspRestClient(httpClient)
+        val pspRestClient = PspRestClient(httpClient, url = "http://localhost:80")
 
         pspRestClient.payWith(payment).fold(
             { fail("Should not happen") },
@@ -51,7 +51,7 @@ class PspRestClientShould {
     @Test
     fun `return an error when call to psp service fails`() = testApplication {
         application {
-            install(ServerContentNegotiation1) {
+            install(ServerContentNegotiation) {
                 json()
             }
             routing {
@@ -66,7 +66,7 @@ class PspRestClientShould {
             }
         }
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
-        val pspRestClient = PspRestClient(httpClient)
+        val pspRestClient = PspRestClient(httpClient, url = "http://localhost:80")
 
         pspRestClient.payWith(payment).fold(
             { assertThat(it).isInstanceOf(PspError::class.java) },
