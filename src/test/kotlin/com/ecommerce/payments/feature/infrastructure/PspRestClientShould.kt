@@ -1,5 +1,6 @@
 package com.ecommerce.payments.feature.infrastructure
 
+import arrow.core.None
 import com.ecommerce.payments.domain.Amount
 import com.ecommerce.payments.domain.Payment
 import com.ecommerce.payments.domain.PspError
@@ -21,7 +22,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerCon
 class PspRestClientShould {
 
     @Test
-    fun `return an Accepted with reference`() = testApplication {
+    fun `return an cccepted with reference`() = testApplication {
         application {
             install(ServerContentNegotiation) {
                 json()
@@ -42,8 +43,36 @@ class PspRestClientShould {
 
         pspRestClient.payWith(payment).fold(
             { fail("Should not happen") },
-            { assertThat(it.reference.value).isEqualTo("12222-2222-222")
+            { it.reference.map { assertThat(it.value).isEqualTo("12222-2222-222") }
               assertThat(it.result).isEqualTo("ACCEPTED") }
+        )
+
+    }
+
+    @Test
+    fun `return an denied status with no reference`() = testApplication {
+        application {
+            install(ServerContentNegotiation) {
+                json()
+            }
+            routing {
+                post("/psp/payment") {
+                    call.respond(status = HttpStatusCode.OK, PspResponseDTO(null,"DENIED"))
+                }
+            }
+        }
+        val httpClient = createClient {
+            install(ClientContentNegotiation) {
+                json()
+            }
+        }
+        val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
+        val pspRestClient = PspRestClient(httpClient, url = "http://localhost:80")
+
+        pspRestClient.payWith(payment).fold(
+            { fail("Should not happen") },
+            { assertThat(it.reference).isEqualTo(None)
+                assertThat(it.result).isEqualTo("DENIED") }
         )
 
     }

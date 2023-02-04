@@ -1,6 +1,10 @@
 package com.ecommerce.payments.infrastructure
 
 import arrow.core.Either
+import arrow.core.Either.Left
+import arrow.core.Either.Right
+import arrow.core.None
+import arrow.core.Some
 import com.ecommerce.payments.domain.*
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -22,12 +26,9 @@ class PspRestClient(private val client: HttpClient, private val url: String) : P
                     setBody(createRequestFrom(payment))
                 }
             }
-            val httpResponse = pspCall.await()
             response = when (HttpStatusCode.OK) {
-                httpResponse.status -> Either.right(
-                    getResult(httpResponse)
-                )
-                else -> Either.left(PspError())
+                pspCall.await().status -> Right(getResult(pspCall.await()))
+                else -> Left(PspError())
             }
         }
         return response
@@ -36,12 +37,12 @@ class PspRestClient(private val client: HttpClient, private val url: String) : P
     private suspend fun getResult(httpResponse: HttpResponse): PspResponse {
         return if (httpResponse.body<PspResponseDTO>().result == "DENIED") {
             PspResponse(
-                Reference("N/A"),
+                None,
                 httpResponse.body<PspResponseDTO>().result
             )
         } else {
             PspResponse(
-                Reference(httpResponse.body<PspResponseDTO>().reference),
+                Some(Reference(httpResponse.body<PspResponseDTO>().reference!!)),
                 httpResponse.body<PspResponseDTO>().result
             )
         }

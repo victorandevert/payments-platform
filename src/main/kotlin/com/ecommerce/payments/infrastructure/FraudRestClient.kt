@@ -1,8 +1,8 @@
 package com.ecommerce.payments.infrastructure
 
 import arrow.core.Either
-import arrow.core.Either.Companion.left
-import arrow.core.Either.Companion.right
+import arrow.core.Either.Left
+import arrow.core.Either.Right
 import com.ecommerce.payments.domain.FraudClient
 import com.ecommerce.payments.domain.FraudError
 import com.ecommerce.payments.domain.FraudResponse
@@ -29,8 +29,8 @@ class FraudRestClient(private val client: HttpClient, private val url: String) :
             }
             val httpResponse = fraudScoreCall.await()
             response = when (OK) {
-                httpResponse.status -> right(FraudResponse(httpResponse.body<FraudResponseDTO>().fraudScore))
-                else -> left(FraudError())
+                httpResponse.status -> Right(FraudResponse(httpResponse.body<FraudResponseDTO>().fraudScore))
+                else -> Left(FraudError())
             }
         }
         return response

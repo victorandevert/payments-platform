@@ -18,7 +18,10 @@ fun Application.configureRouting(paymentService: PaymentService) {
             val response = paymentService.makeA(Payment(
                 saleId = SaleId(requestBody.saleId), amount = Amount.from(requestBody.amount,requestBody.currency)
             ))
-            call.respond(status = OK, PaymentResponseDTO(reference = response.reference.get().value, result = response.result,response.fraudScore))
+            response.reference.fold(
+                { call.respond(status = OK, PaymentResponseDTO(reference = null, result = response.result, response.fraudScore)) },
+                { call.respond(status = OK, PaymentResponseDTO(reference = it.value, result = response.result, response.fraudScore)) }
+            )
         }
     }
 }

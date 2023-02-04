@@ -2,8 +2,6 @@ package com.ecommerce.payments.feature
 
 import com.ecommerce.payments.api.PaymentResponseDTO
 import com.ecommerce.payments.api.configureRouting
-import com.ecommerce.payments.domain.PspResponse
-import com.ecommerce.payments.domain.Reference
 import com.ecommerce.payments.infrastructure.FraudResponseDTO
 import com.ecommerce.payments.infrastructure.PspResponseDTO
 import com.ecommerce.payments.infrastructure.paymentService
@@ -56,6 +54,43 @@ class PaymentFeature {
 
         assertThat(response.reference).isEqualTo("12222-2222-222")
         assertThat(response.result).isEqualTo("ACCEPTED")
+        assertThat(response.fraudScore).isEqualTo(5)
+    }
+
+    @Test
+    fun `should return an denied payment`() = testApplication {
+        val httpClient = createClient {
+            install(ClientContentNegotiation){
+                json()
+            }
+        }
+        application {
+            install(ServerContentNegotiation){
+                json()
+            }
+            configureRouting(paymentService(
+                httpClient,
+                "http://localhost:80",
+                "http://localhost:80")
+            )
+            routing {
+                post("/fraud/evaluation"){
+                    call.respond(status = HttpStatusCode.OK, FraudResponseDTO(5))
+                }
+                post("/psp/payment"){
+                    call.respond(status = HttpStatusCode.OK, PspResponseDTO(null, "DENIED"))
+                }
+            }
+        }
+
+        val response = httpClient.post("/ecommerce/payment") {
+            contentType(ContentType.Application.Json)
+            setBody("{\"saleId\": \"SALE123\", \"amount\": 100000, \"currency\": \"EUR\"}")
+        }.body<PaymentResponseDTO>()
+
+
+        assertThat(response.reference).isNull()
+        assertThat(response.result).isEqualTo("DENIED")
         assertThat(response.fraudScore).isEqualTo(5)
     }
  }
