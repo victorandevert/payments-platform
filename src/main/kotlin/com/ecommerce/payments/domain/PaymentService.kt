@@ -1,11 +1,9 @@
 package com.ecommerce.payments.domain
 
-import java.util.*
-
 class PaymentService(private val pspClient: PspClient, private val fraudClient: FraudClient) {
 
     fun makeA(payment: Payment): PaymentResult {
-        if (isItNecessaryToEvaluateFraud(payment)) {
+        if (payment.isItNecessaryToEvaluateFraud()) {
             return fraudClient.evaluate(payment).fold(
                 { PaymentResult("DENIED", -1) },
                 {fraud ->
@@ -20,9 +18,5 @@ class PaymentService(private val pspClient: PspClient, private val fraudClient: 
                 {  PaymentResult("DENIED", -1) },
                 {  PaymentResult(it.reference, it.result, 0)})
         }
-    }
-
-    private fun isItNecessaryToEvaluateFraud(payment: Payment): Boolean {
-        return payment.amount.isEqualOrGreaterThan100EUR()
     }
 }

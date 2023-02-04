@@ -1,6 +1,5 @@
 package com.ecommerce.payments.feature.domain
 
-import arrow.core.Either
 import arrow.core.Either.Right
 import arrow.core.Some
 import com.ecommerce.payments.domain.*
@@ -63,5 +62,38 @@ class PaymentServiceShould {
 
         verify { listOf(fraudClient) wasNot Called }
         assertThat(response.result).isEqualTo("ACCEPTED")
+    }
+
+    @Test
+    fun `don't evaluate fraud when amount is below 50 USD`() {
+        val payment = Payment(SaleId("SALE123"), Amount.from("25000", "USD"))
+        val pspClient = mockk<PspClient> {
+            every { payWith(payment) } returns Right(PspResponse(Some(Reference("12222-2222-222")), "ACCEPTED"))
+        }
+        val fraudClient = mockk<FraudClient>(relaxed = true)
+
+        val paymentService = PaymentService(pspClient, fraudClient)
+
+        val response: PaymentResult = paymentService.makeA(payment)
+
+        verify { listOf(fraudClient) wasNot Called }
+        assertThat(response.result).isEqualTo("ACCEPTED")
+    }
+
+    @Test
+    fun `evaluate fraud when amount for unknown currencies`() {
+        val payment = Payment(SaleId("SALE123"), Amount.from("25000", "COP"))
+        val pspClient = mockk<PspClient>(relaxed = true)
+        val fraudClient = mockk<FraudClient> {
+            every { evaluate(payment) } returns Right(FraudResponse(10))
+        }
+
+        val paymentService = PaymentService(pspClient, fraudClient)
+
+        val response: PaymentResult = paymentService.makeA(payment)
+
+        verify { listOf(pspClient) wasNot Called }
+        assertThat(response.result).isEqualTo("DENIED")
+        assertThat(response.fraudScore).isEqualTo(10)
     }
 }
