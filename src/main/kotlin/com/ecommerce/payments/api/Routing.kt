@@ -28,4 +28,4 @@ fun Application.configureRouting(paymentService: PaymentService) {
 
 data class PaymentRequestDTO(val saleId: String, val amount: String, val currency: String)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class PaymentResponseDTO(val reference: String?, val result: String, val fraudScore: Int)
+data class PaymentResponseDTO(val reference: String?, val result: String, val fraudScore: Int?)

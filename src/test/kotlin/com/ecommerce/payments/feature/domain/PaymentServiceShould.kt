@@ -21,7 +21,6 @@ class PaymentServiceShould {
         val fraudClient = mockk<FraudClient> {
             every { evaluate(payment) } returns Right(FraudResponse(5))
         }
-
         val paymentService = PaymentService(pspClient, fraudClient)
 
         val response: PaymentResult = paymentService.makeA(payment)
@@ -39,7 +38,6 @@ class PaymentServiceShould {
         val fraudClient = mockk<FraudClient> {
             every { evaluate(payment) } returns Right(FraudResponse(8))
         }
-
         val paymentService = PaymentService(pspClient, fraudClient)
 
         val response: PaymentResult = paymentService.makeA(payment)
@@ -55,7 +53,6 @@ class PaymentServiceShould {
             every { payWith(payment) } returns Right(PspResponse(Some(Reference("12222-2222-222")), "ACCEPTED"))
         }
         val fraudClient = mockk<FraudClient>(relaxed = true)
-
         val paymentService = PaymentService(pspClient, fraudClient)
 
         val response: PaymentResult = paymentService.makeA(payment)
@@ -71,7 +68,6 @@ class PaymentServiceShould {
             every { payWith(payment) } returns Right(PspResponse(Some(Reference("12222-2222-222")), "ACCEPTED"))
         }
         val fraudClient = mockk<FraudClient>(relaxed = true)
-
         val paymentService = PaymentService(pspClient, fraudClient)
 
         val response: PaymentResult = paymentService.makeA(payment)
@@ -87,7 +83,6 @@ class PaymentServiceShould {
         val fraudClient = mockk<FraudClient> {
             every { evaluate(payment) } returns Right(FraudResponse(10))
         }
-
         val paymentService = PaymentService(pspClient, fraudClient)
 
         val response: PaymentResult = paymentService.makeA(payment)
