@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
-    <artifactId>com-example-payments-processor</artifactId>
+    <groupId>com</groupId>
+    <artifactId>com-payments-platform</artifactId>
     <version>0.0.1</version>
-    <name>com.ecommerce.payments-processor</name>
-    <description>com.ecommerce.payments-processor</description>
+    <name>com.ecommerce.payments-platform</name>
+    <description>com.ecommerce.payments-platform</description>
     <properties>
         <ktor_version>2.2.2</ktor_version>
         <kotlin.code.style>official</kotlin.code.style>
