@@ -73,9 +73,9 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-debug</artifactId>
+            <artifactId>kotlinx-coroutines-test</artifactId>
             <version>1.6.4</version>
-            <scope>test</scope>
+            <type>test</type>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
