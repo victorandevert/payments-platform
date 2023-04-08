@@ -14,12 +14,11 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
 
 class PspRestClient(private val client: HttpClient, private val url: String) : PspClient {
-    override fun payWith(payment: Payment): Either<PspError, PspResponse> {
-        var response : Either<PspError, PspResponse>
-        runBlocking {
+    override suspend fun payWith(payment: Payment): Either<PspError, PspResponse> = coroutineScope{
+        val response : Either<PspError, PspResponse>
             val pspCall: Deferred<HttpResponse> = async {
                 client.post("$url/psp/payment"){
                     contentType(ContentType.Application.Json)
@@ -30,8 +29,7 @@ class PspRestClient(private val client: HttpClient, private val url: String) : P
                 pspCall.await().status -> Right(getResult(pspCall.await()))
                 else -> Left(PspError())
             }
-        }
-        return response
+         response
     }
 
     private suspend fun getResult(httpResponse: HttpResponse): PspResponse {

@@ -2,7 +2,7 @@ package com.ecommerce.payments.domain
 
 class PaymentService(private val pspClient: PspClient, private val fraudClient: FraudClient) {
 
-    fun makeA(payment: Payment): PaymentResult {
+    suspend fun makeA(payment: Payment): PaymentResult {
         return when {
             payment.isItNecessaryToEvaluateFraud() -> fraudClient.evaluate(payment).fold(
                     {PaymentResult.denied()},
@@ -13,7 +13,7 @@ class PaymentService(private val pspClient: PspClient, private val fraudClient: 
                                 { PaymentResult.accepted(it, fraud.score)})
                         } else return PaymentResult.denied(fraud.score)
                     })
-            else -> pspClient.payWith(payment).fold(
+                else -> return pspClient.payWith(payment).fold(
                     {  PaymentResult.denied() },
                     {  PaymentResult.accepted(it)})
         }

@@ -3,7 +3,7 @@ package com.ecommerce.payments.domain
 import arrow.core.Either
 
 interface FraudClient {
-    fun evaluate(payment: Payment): Either<FraudError, FraudResponse>
+    suspend fun evaluate(payment: Payment): Either<FraudError, FraudResponse>
 }
 
 class FraudResponse(val score: Int)

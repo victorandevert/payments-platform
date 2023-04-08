@@ -15,12 +15,11 @@ import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
 
 class FraudRestClient(private val client: HttpClient, private val url: String) : FraudClient {
-    override fun evaluate(payment: Payment): Either<FraudError, FraudResponse> {
-        var response: Either<FraudError, FraudResponse>
-        runBlocking {
+    override suspend fun evaluate(payment: Payment): Either<FraudError, FraudResponse> = coroutineScope{
+        val response: Either<FraudError, FraudResponse>
             val fraudScoreCall: Deferred<HttpResponse> = async {
                 client.post("$url/fraud/evaluation"){
                     contentType(ContentType.Application.Json)
@@ -32,9 +31,7 @@ class FraudRestClient(private val client: HttpClient, private val url: String) :
                 httpResponse.status -> Right(FraudResponse(httpResponse.body<FraudResponseDTO>().fraudScore))
                 else -> Left(FraudError())
             }
-        }
-        return response
-
+         response
     }
 
     private fun createRequestFrom(payment: Payment): PaymentDTO {
