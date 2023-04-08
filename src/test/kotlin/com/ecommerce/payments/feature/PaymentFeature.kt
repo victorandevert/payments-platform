@@ -58,7 +58,7 @@ class PaymentFeature {
     }
 
     @Test
-    fun `should return an denied payment`() = testApplication {
+    fun `should return a denied payment`() = testApplication {
         val httpClient = createClient {
             install(ClientContentNegotiation){
                 jackson()

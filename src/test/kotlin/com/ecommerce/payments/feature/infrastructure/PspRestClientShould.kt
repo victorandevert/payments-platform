@@ -22,7 +22,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerCon
 class PspRestClientShould {
 
     @Test
-    fun `return an cccepted with reference`() = testApplication {
+    fun `return an accepted with reference`() = testApplication {
         application {
             install(ServerContentNegotiation) {
                 jackson()
@@ -50,7 +50,7 @@ class PspRestClientShould {
     }
 
     @Test
-    fun `return an denied status with no reference`() = testApplication {
+    fun `return a denied status with no reference`() = testApplication {
         application {
             install(ServerContentNegotiation) {
                 jackson()
@@ -78,7 +78,7 @@ class PspRestClientShould {
     }
 
     @Test
-    fun `return an error when call to psp service fails`() = testApplication {
+    fun `return an error when the psp service call fails`() = testApplication {
         application {
             install(ServerContentNegotiation) {
                 jackson()

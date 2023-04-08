@@ -48,7 +48,7 @@ class FraudRestClientShould {
     }
 
     @Test
-    fun `return an error when call to fraud service fails`() = testApplication {
+    fun `return an error when the fraud service call fails`() = testApplication {
         application {
             install(ServerContentNegotiation1) {
                 jackson()
@@ -67,7 +67,7 @@ class FraudRestClientShould {
         val payment = Payment(SaleId("SALE123"), Amount.from("1", "EUR"))
         val fraudRestClient = FraudRestClient(httpClient, url = "http://localhost:80")
 
-        val response = fraudRestClient.evaluate(payment)
+        fraudRestClient.evaluate(payment)
 
         fraudRestClient.evaluate(payment).fold(
             { assertThat(it).isInstanceOf(FraudError::class.java) },

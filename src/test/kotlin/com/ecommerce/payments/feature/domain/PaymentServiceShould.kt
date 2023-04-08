@@ -13,7 +13,7 @@ import kotlin.test.Test
 class PaymentServiceShould {
 
     @Test
-    fun `call PSP client to make a payment when fraud is below 6`() {
+    fun `call PSP client to make a payment when fraud score is below 6`() {
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
         val pspClient = mockk<PspClient> {
             every { payWith(payment) } returns Right(PspResponse(Some(Reference("12222-2222-222")), "ACCEPTED"))
@@ -32,7 +32,7 @@ class PaymentServiceShould {
     }
 
     @Test
-    fun `don't make a payment when fraud is higher than 5`() {
+    fun `don't make a payment when fraud score is higher than 5`() {
         val payment = Payment(SaleId("SALE123"), Amount.from("100000", "EUR"))
         val pspClient = mockk<PspClient>(relaxed = true)
         val fraudClient = mockk<FraudClient> {
@@ -77,7 +77,7 @@ class PaymentServiceShould {
     }
 
     @Test
-    fun `evaluate fraud when amount for unknown currencies`() {
+    fun `deny payments due to fraud for non-accepted currencies`() {
         val payment = Payment(SaleId("SALE123"), Amount.from("25000", "COP"))
         val pspClient = mockk<PspClient>(relaxed = true)
         val fraudClient = mockk<FraudClient> {
